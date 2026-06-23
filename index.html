@@ -32,7 +32,7 @@
       white-space: pre;
       display: block;
     }
-    .ascii-art { color: #ff0000; }
+    .ascii-art { color: #ff2222; }
     .glitch-layer {
       position: absolute;
       top: 0; left: 0;
@@ -125,7 +125,7 @@
     .close-btn {
       position: fixed; top: 1rem; right: 1rem; z-index: 300;
       background: transparent;
-      border: 1px solid #226fff; color: #ff5252;
+      border: 1px solid #ff2222; color: #ff2222;
       font-family: 'Courier New', monospace;
       font-size: 13px; padding: 6px 14px;
       cursor: pointer; letter-spacing: 1px;
@@ -262,32 +262,41 @@
     const closeBtn  = document.getElementById('closeBtn');
     const hint      = document.getElementById('hint');
 
-    const scream = new Audio('legalne.mp3');
-    scream.volume = 1.0;
-
     let triggered = false;
+    let krissedStarted = false;
 
     document.body.addEventListener('click', e => {
       if (triggered || closeBtn.contains(e.target)) return;
       triggered = true;
       hint.style.display = 'none';
 
-      // 1. flash
+      // criar audio DENTRO do click para passar autoplay policy
+      const scream = new Audio('legalne.mp3');
+      scream.volume = 1.0;
+
+      // 1. flash branco
       flash.classList.add('pop');
 
-      // 2. jumpscare + som
-      setTimeout(() => {
-        jumpscare.classList.add('active');
-        scream.currentTime = 0;
-        scream.play().catch(()=>{});
-      }, 80);
+      // 2. jumpscare imediato
+      jumpscare.classList.add('active');
 
-      // 3. apos mp3 terminar -> krissed
+      // 3. tocar som (criado no mesmo evento de clique)
+      const playPromise = scream.play();
+
+      // 4. quando mp3 acabar -> krissed
       scream.addEventListener('ended', startKrissed, { once: true });
-      setTimeout(startKrissed, 4000); // fallback
+
+      // fallback: se audio falhar ou for muito curto
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // autoplay bloqueado mesmo assim — vai pro krissed direto
+          setTimeout(startKrissed, 500);
+        });
+      }
+      // fallback por tempo
+      setTimeout(startKrissed, 5000);
     });
 
-    let krissedStarted = false;
     function startKrissed() {
       if (krissedStarted) return;
       krissedStarted = true;
