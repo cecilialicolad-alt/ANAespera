@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ascensão</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0d0d0d;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 2rem 5rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .scene {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .ascii-wrap { position: relative; flex-shrink: 0; }
+
+    .ascii-art, .glitch-layer {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: clamp(4px, 1.1vw, 10px);
+      line-height: 1.2;
+      white-space: pre;
+      display: block;
+    }
+
+    .ascii-art { color: #ff2222; }
+
+    .glitch-layer {
+      position: absolute;
+      top: 0; left: 0;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .bottom-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0;
+    }
+
+    .side-line {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: clamp(11px, 2vw, 17px);
+      color: #ff2222;
+      letter-spacing: 3px;
+      line-height: 2;
+      opacity: 0;
+      animation: fadein 0.5s ease forwards;
+      text-transform: lowercase;
+    }
+    .side-line:nth-child(1) { animation-delay: 0.8s; }
+    .side-line:nth-child(2) { animation-delay: 1.4s; }
+    .side-line:nth-child(3) { animation-delay: 2.0s; }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 0.6em;
+      height: 1em;
+      background: #ff2222;
+      vertical-align: middle;
+      margin-left: 3px;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    /* hint */
+    .hint {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      animation: bounce 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hint-text {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      color: #ff2222;
+      opacity: 0.45;
+      letter-spacing: 1px;
+    }
+    .hint-arrow {
+      font-size: 18px;
+      color: #ff2222;
+      opacity: 0.45;
+      line-height: 1;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(-6px); }
+    }
+
+    /* overlay */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay.active { display: flex; }
+    .overlay video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .close-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 200;
+      background: transparent;
+      border: 1px solid #ff2222;
+      color: #ff2222;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      padding: 6px 14px;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .close-btn:hover { background: #ff222222; }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem 1rem 5rem; }
+      .ascii-art, .glitch-layer { font-size: 1.7vw; }
+      .side-line { font-size: clamp(11px, 3.5vw, 17px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scene">
+    <div class="ascii-wrap">
+      <span class="glitch-layer" id="glitch-r" style="color:#ff6600;"></span>
+      <span class="glitch-layer" id="glitch-b" style="color:#990000;"></span>
+      <span class="ascii-art" id="ascii-main">                     ..                 ..
+               .',;::::;,;;;,,,,,'.''''......
+            .';ooddoollccccc:cc::;:;,,,;:;,'....
+          ..cddlclccldxxxdoolcc::c::::::,;:;:::cc;'...
+         ..cdl:,;::clllolllc::;;:::c:;....;;,,,,;:::cc:,.
+         .,:;,,;;,;;,;;::coxxddolc;,... .';'....'''';;:clc:...
+         ,'.......'',,,.',;cc:;,'......  .....'''..',,.',;ccc::'.
+         ....    '',.''....,,;;;;;;,,'.'.....''.......''',;:llcol;.
+                .,'...',,:ccccclcc::::::::;,''.........'',;;cccoool;.
+....... .       ....';:::ccccccccccccccccllllc;;;,......',:;cl:lddol;.
+,:c:'..      .....';:ccclclclllllllllcccclldd;.loc;'....';c::lc:lkxl:,
+:,,'.       ....,;:::clllllloloooooooollooldxc.lo;''....':coooo;;okxl;'
+.....     .....'colcccodddddddddddddddoododdkx':o;'..,c;,codxolc;:codc:.
+.. ..  .......;;,oolcloddddxxxxxxdxxxxxxddddkk;.ol;..:dl::oxkdc:::;clll.
+ . .   ... ..';o,ldoooddxxxxxxxxkkkkkkOkxxddxk:.oo:,.'dol::oddo;:,;;cll:
+ ...  ..   ...,oc;xdxddxxxkkOOOOOOkOkOOkkxddxkc.ldc;..ddo:,clool:,;:cccl.
+  ..  ..  .''.':o.oxxxxkkkOOOO000KK00OOOkxxxkx,.odc,..odoc,,lllol,;:cccc.
+.. ..     .,:..;o;.:kkkOO00000KKKKK000OOkkkOd,..odc,..lxoc,.coooxc',;:lc.
+....      .,l'.,lx;.ckOO00000KKXXXXXKK0OOOOo'..,doc;..ldoc,.'coxxl..;;::.
+....      .'ll..:xkc.;oO0KKKKXXXXXXKKK00Oxc'.':ol,,'..,lo:,..;codc..,,,;.
+   .. ..  ..co:.,ldkc'.;lxkkO0KXXXXKK0Oko,',codo:.... ;d;','.,;cl:..,.''
+  ..  .... .;ll..;coxxc;;clodxOKKXXK0kxoccl::l::.    .cl;','..;:c;.......
+  .  ..,'...':cc...:looxdkkddddk00KK0xolc:c;.....   .co:',;'.',;:;'.'...
+    . .,......'.'  .':::xkkdoooldOO0Odccc;...;::c:;',l:';::,'..;c:'.....
+     .'......'.''.   ....,,,:oddodO0Oloo:.';lll,l:::c,.;::;,...;cc......
+  .. .. ......,':ol;..':cc:;,''cOddOOodxd;cldoolollc;,;:;;,'.. .c:......
+     .....,.:'';,;cl,':o:,dloclloxoxOxooolO0Okxdccclolc:;;,'....;:......
+     ...';:,;;.;;;,,,,:loodxkk0KodookxodddO0Okkxxxxxdlc:;;,'....,,...
+     ...'cl;''.',;:c:,;:ccoxkO0XkollxkolodxkO0000Okxxoc:;,,'....''..
+      ...,l:''..';::cldxxkO000K0xlcldxolccok0KK0Okkkkdlc:;,'....'''.
+        ..;c;'..',;;:loxkk00KXK0klclokollcldO000Okkkkdlc::;,....''
+         .':c;...',;:clodxOO0KKKOlcllxdcllcllx00Okkxdlc::;,'...''...
+           ',.....',;:cloxkkO000occcclo:;,;;:dO0Okxdlc:::;,..'',..:;
+            .. ....';:clodxkOO00l;;;,,''';loxkOkkxdooc:;;;'',;;,.,,'.
+            ...,....';clloodkkOOOxxdlc:ccxkddxxdllclc:::;;,;:::,..',
+           ....''.....,;::clodkOOOOkxdodooocc:::;,..:llc:ccc::;',..'
+              .'..',,''',;;:oddxdollcclododdl;,;;'.'cooolllc:;'...
+            .......,::;;;;;;:::'':::::cooollc:::,.':cloolcc:;....'..
+   ...    ..'''';',',:ccc::cc:,..,;::::;;,;:::,,',:::ccccc:,..  ..'''
+......    .,,,,,;,,;,':ccc:ccc:,'''',,'''.'',;;;:c:;;;;;;;,.....',,,,'
+.'''''    ';;;;;:';::,';:cc::c:;,,;;;,;:cloddddoc:;,,,''''...;,.'',,,'
+',,,;,    ,:;;::;'::::;'';::::;;;,;:cclddxxkxdl:;;,'.......;lc';;',,,,
+,;;;:;    ,:::::'':::::c:,',,;;,'',,,,:clodol:;,'''.......',:'.;,,,,,,
+;;::::    ;::::;',:::::::c::;''''...',''''',''.''........''::.,;,;,,,,'
+;:::::    ;:::;...,::;::ol:cl;,.........''''''.''',,;,....,;',;;;;;,,,'
+;:::::    ;::::,'.,::,,:clccl:;'.,,,,,''''''',,;::;:;'.'.':;.;:;;;;,,,'
+::::c:    ;c::;'.';:::ccolc:cd:;,,,;::::;;;;;::::::;,''',;;;..;;;;;,,,;
+::::c;    ;::::''';;clc::cc;::lc;;;;:::::;;;::::c:;,',;:::;;.,;:;;;,,,,
+;:::c;    ::::;.'':;ooo:c;,:ccld:;;;;:::;;;;::::c:;'.;:::::,;::;;;;;,,,'</span>
+    </div>
+
+    <div class="bottom-text">
+      <div class="side-line">ela está te esperando</div>
+      <div class="side-line">para a</div>
+      <div class="side-line">ascensão<span class="cursor"></span></div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">
+    <span class="hint-text">clique</span>
+    <span class="hint-arrow">↑</span>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <button class="close-btn" id="closeBtn">[ fechar ]</button>
+    <video id="videoEl" playsinline></video>
+  </div>
+
+  <script>
+    /* glitch */
+    const el = document.getElementById('ascii-main');
+    const lines = el.textContent.split('\n');
+    const glitchR = document.getElementById('glitch-r');
+    const glitchB = document.getElementById('glitch-b');
+    const junk = '!@#$%^&*<>?/\\|{}[]~`';
+
+    function corrupt() {
+      return lines.map(line => {
+        if (Math.random() < 0.3 && line.trim().length > 0) {
+          const arr = line.split('');
+          const n = Math.floor(Math.random() * 5) + 1;
+          for (let i = 0; i < n; i++)
+            arr[Math.floor(Math.random() * arr.length)] = junk[Math.floor(Math.random() * junk.length)];
+          return arr.join('');
+        }
+        return line;
+      }).join('\n');
+    }
+
+    function doGlitch() {
+      const ox = (Math.random() - 0.5) * 10;
+      const oy = (Math.random() - 0.5) * 4;
+      glitchR.style.transform = `translate(${ox}px,${oy}px)`;
+      glitchB.style.transform = `translate(${-ox}px,${-oy}px)`;
+      glitchR.textContent = corrupt();
+      glitchB.textContent = corrupt();
+      glitchR.style.opacity = '0.7';
+      glitchB.style.opacity = '0.6';
+      const dur = 50 + Math.random() * 130;
+      setTimeout(() => {
+        glitchR.style.transform = `translate(${(Math.random()-0.5)*14}px,0)`;
+        glitchB.style.transform = `translate(${(Math.random()-0.5)*14}px,0)`;
+        glitchR.textContent = corrupt();
+        glitchB.textContent = corrupt();
+      }, dur);
+      setTimeout(() => {
+        glitchR.style.opacity = '0';
+        glitchB.style.opacity = '0';
+        glitchR.style.transform = 'translate(0,0)';
+        glitchB.style.transform = 'translate(0,0)';
+        setTimeout(doGlitch, 2000 + Math.random() * 5000);
+      }, dur * 2.5);
+    }
+    setTimeout(doGlitch, 1500);
+
+    /* krissed only */
+    const overlay  = document.getElementById('overlay');
+    const videoEl  = document.getElementById('videoEl');
+    const closeBtn = document.getElementById('closeBtn');
+    const hint     = document.getElementById('hint');
+
+    document.body.addEventListener('click', (e) => {
+      if (overlay.classList.contains('active')) return;
+      if (closeBtn.contains(e.target)) return;
+      videoEl.src = 'krissed.mp4';
+      videoEl.load();
+      videoEl.play();
+      overlay.classList.add('active');
+      hint.style.display = 'none';
+    });
+
+    closeBtn.addEventListener('click', () => {
+      overlay.classList.remove('active');
+      videoEl.pause();
+      videoEl.src = '';
+    });
+  </script>
+</body>
+</html>
